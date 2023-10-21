@@ -1,6 +1,5 @@
 import {
   Card,
-  Icon,
   IconButton,
   List,
   ListItem,
