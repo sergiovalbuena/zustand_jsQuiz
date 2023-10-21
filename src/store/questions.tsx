@@ -10,6 +10,7 @@ interface State {
   selectAnswer: (questionId: number, answerIndex: number) => void;
   goNextQuestion: () => void;
   goPreviousQuestion: () => void;
+  resetGame: () => void;
 }
 
 //el create recibe un set que es una funcion que recibe un
@@ -75,6 +76,10 @@ export const useQuestionsStore = create<State>()(
           if (previousQuestion >= 0) {
             set({ currentQuestion: previousQuestion });
           }
+        },
+
+        resetGame: () => {
+          set({ currentQuestion: 0, questions: [] });
         },
       };
     },
