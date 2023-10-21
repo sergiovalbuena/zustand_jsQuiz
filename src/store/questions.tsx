@@ -1,17 +1,21 @@
 import { create } from "zustand";
 import { type Question } from "../types";
+import confetti from "canvas-confetti";
 
 interface State {
   questions: Question[];
   currentQuestion: number;
   fetchQuestions: (limit: number) => Promise<void>;
   selectAnswer: (questionId: number, answerIndex: number) => void;
+  goNextQuestion: () => void;
+  goPreviousQuestion: () => void;
 }
 
 //el create recibe un set que es una funcion que recibe un
 ///objeto con las propiedades que queremos actualizar
 export const useQuestionsStore = create<State>((set, get) => {
   return {
+    loading: false,
     questions: [],
     currentQuestion: 0, // indice de la pregunta actual
 
@@ -34,6 +38,8 @@ export const useQuestionsStore = create<State>((set, get) => {
       const questionInfo = newQuestions[questionIndex]; //obtenemos la pregunta
       const isCorrectUserAnswer = questionInfo.correctAnswer === answerIndex; //comparamos la respuesta del usuario con la respuesta correcta
 
+      if (isCorrectUserAnswer) confetti();
+
       //cambiar la informacion en la copia de la pregunta
       newQuestions[questionIndex] = {
         ...questionInfo,
@@ -43,6 +49,24 @@ export const useQuestionsStore = create<State>((set, get) => {
 
       //actualizar el estado
       set({ questions: newQuestions });
+    },
+
+    goNextQuestion: () => {
+      const { currentQuestion, questions } = get();
+      const nextQuestion = currentQuestion + 1;
+
+      if (nextQuestion < questions.length) {
+        set({ currentQuestion: nextQuestion });
+      }
+    },
+
+    goPreviousQuestion: () => {
+      const { currentQuestion } = get();
+      const previousQuestion = currentQuestion - 1;
+
+      if (previousQuestion >= 0) {
+        set({ currentQuestion: previousQuestion });
+      }
     },
   };
 });
